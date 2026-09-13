@@ -11,7 +11,6 @@ def menu():
     choice = input("Please enter your choice (1-4): ")
     return choice
 
-
 def printAvailableColors():
     print("Available colors:")
     for color in colors:
@@ -58,17 +57,29 @@ def main():
 
 def startGame():
 
-    nbAttempts = 12
+    nbAttempts = pickNumberOfAttempts()
     code = createCode()
+    codeWithFoundLetters = []
     printAvailableColors()
     print(hideCode(code))
 
-    while nbAttempts > 0:
+    while code != codeWithFoundLetters and nbAttempts > 0:
         userGuess = guess()
-        codeWithFoundLetters = createCodeWithFoundLetters(userGuess, code)
-        print(codeWithFoundLetters)
-        nbAttempts -= 1
         print(f"You have {nbAttempts} attempts left.")
+        codeWithFoundLetters = createCodeWithFoundLetters(userGuess, code)
+        print(f"Code with found letters: {codeWithFoundLetters}")
+        print(f"Code: {code}, codeWithFoundLetters: {codeWithFoundLetters}")
+        nbAttempts -= 1
+        
+
+    replay()
+
+def replay():
+    replay = input("Do you want to play again? (y/n): ")
+    if replay.lower() == "y":
+        startGame()
+    else:
+        exit() 
 
 def createCodeWithFoundLetters(userGuess, code):
     codeWithFoundLetters = ""
@@ -86,6 +97,39 @@ def viewScores():
     pass
 
 def settings():
-    pass
+    print("Settings:")
+    print("1. Change number of attempts")
+    print("2. Change length of code")
+    print("3. Add a new color")
+    choice = input("Please enter your choice (1-3): ")
+    match choice:
+        case "1":
+            pickNumberOfAttempts()
+        case "2":
+            pickLengthOfCode()
+        case "3":
+            addColorsToAvailableColors()
+        case _:
+            print("Invalid choice. Please try again.")
 
-startGame()
+def pickNumberOfAttempts(nbAttempts = 12):
+    attempts = nbAttempts
+    if attempts != 12:
+        attempts = int(input("Enter the number of attempts you want (default is 12): "))
+    return attempts
+
+def pickLengthOfCode(lengthOfCode = 4):
+    codeLength = lengthOfCode
+    if codeLength != 4:
+        codeLength = int(input("Enter the length of the code you want (default is 4): "))
+    return codeLength
+
+def addColorsToAvailableColors():
+    newColor = input("Enter a new color to add: ")
+    if newColor not in colors:
+        colors.append(newColor)
+        print(f"{newColor} has been added to the available colors.")
+    else:
+        print(f"{newColor} is already in the available colors.")
+
+main()
