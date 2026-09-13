@@ -1,4 +1,6 @@
 import random
+import json
+
 
 colors = ['red', 'green', 'blue', 'yellow', 'purple', "white"]
 DEFAULT_ATTEMPTS = 12
@@ -7,9 +9,13 @@ attempts = DEFAULT_ATTEMPTS
 codeLength = DEFAULT_CODE_LENGTH
 
 
-def menu():
+def askName():
     name = input("Please enter your name: ")
     print(f"Hello {name}, Welcome to Mastermind!")
+    return name
+
+
+def menu():
     print("1. Start a new game")
     print("2. View scores")
     print("3. Settings")
@@ -130,6 +136,20 @@ def settings():
             addColorsToAvailableColors()
         case _:
             print("Invalid choice. Please try again.")
+    savePreferences()
+    main()
+
+def savePreferences():
+    settingsPreferences = {
+        "name": askName(),
+        "numberOfAttempts": pickNumberOfAttempts(),
+        "lengthOfCode": pickLengthOfCode(),
+        "colors": addColorsToAvailableColors(),
+    }
+
+    json_str = json.dumps(settingsPreferences, indent=4)
+    with open("settings.json", "w") as file:
+        file.write(json_str)
 
 def pickNumberOfAttempts():
     attempts = int(input("Enter the number of attempts you want (default is 12): "))
