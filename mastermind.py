@@ -1,6 +1,11 @@
 import random
 
 colors = ['red', 'green', 'blue', 'yellow', 'purple', "white"]
+DEFAULT_ATTEMPTS = 12
+DEFAULT_CODE_LENGTH = 4
+attempts = DEFAULT_ATTEMPTS
+codeLength = DEFAULT_CODE_LENGTH
+
 
 def menu():
     name = input("Please enter your name: ")
@@ -17,9 +22,9 @@ def printAvailableColors():
     for color in colors:
         print(color)
 
-def createCode(lengthOfCode = 4):
+def createCode():
     code = ""
-    for i in range (lengthOfCode):
+    for i in range (codeLength):
         color = random.choice(colors)
         code += color[0]
     return code
@@ -58,7 +63,7 @@ def main():
 
 def startGame():
 
-    nbAttempts = pickNumberOfAttempts()
+    nbAttempts = attempts
     code = createCode()
     codeWithFoundLetters = []
     printAvailableColors()
@@ -126,16 +131,12 @@ def settings():
         case _:
             print("Invalid choice. Please try again.")
 
-def pickNumberOfAttempts(nbAttempts = 12):
-    attempts = nbAttempts
-    if attempts != 12:
-        attempts = int(input("Enter the number of attempts you want (default is 12): "))
+def pickNumberOfAttempts():
+    attempts = int(input("Enter the number of attempts you want (default is 12): "))
     return attempts
 
-def pickLengthOfCode(lengthOfCode = 4):
-    codeLength = lengthOfCode
-    if codeLength != 4:
-        codeLength = int(input("Enter the length of the code you want (default is 4): "))
+def pickLengthOfCode():
+    codeLength = int(input("Enter the length of the code you want (default is 4): "))
     return codeLength
 
 def addColorsToAvailableColors():
