@@ -8,6 +8,8 @@ DEFAULT_CODE_LENGTH = 4
 attempts = DEFAULT_ATTEMPTS
 codeLength = DEFAULT_CODE_LENGTH
 
+# je dois remplacer ces valeurs pour lire depuis le fichier !!!
+
 
 def askName():
     name = input("Please enter your name: ")
@@ -52,7 +54,7 @@ def guess():
     return list(guess)
 
 def main():
-
+    name = askName();
     action = menu()
     match action:
         case "1":
@@ -61,7 +63,7 @@ def main():
             viewScores()
             pass
         case "3":
-            settings()
+            settings(name)
         case "4":
             exit()
         case _:
@@ -121,30 +123,34 @@ def checkIfLetterisInsideCode(userGuess, code):
 def viewScores():
     pass
 
-def settings():
+def settings(user):
     print("Settings:")
     print("1. Change number of attempts")
     print("2. Change length of code")
     print("3. Add a new color")
     choice = input("Please enter your choice (1-3): ")
+    attempts = 12
+    lengthOfCode = 4
+    color = ""
     match choice:
         case "1":
-            pickNumberOfAttempts()
+            attempts = pickNumberOfAttempts()
         case "2":
-            pickLengthOfCode()
+            lengthOfCode = pickLengthOfCode()
         case "3":
-            addColorsToAvailableColors()
+            color= addColorsToAvailableColors()
         case _:
             print("Invalid choice. Please try again.")
-    savePreferences()
+    savePreferences(user, color, attempts, lengthOfCode)
     main()
 
-def savePreferences():
+def savePreferences(name, color, attempts = 12, lengthOfCode = 4):
+   
     settingsPreferences = {
-        "name": askName(),
-        "numberOfAttempts": pickNumberOfAttempts(),
-        "lengthOfCode": pickLengthOfCode(),
-        "colors": addColorsToAvailableColors(),
+        "name": name,
+        "numberOfAttempts": attempts,
+        "lengthOfCode": lengthOfCode,
+        "colors": color,
     }
 
     json_str = json.dumps(settingsPreferences, indent=4)
@@ -166,5 +172,6 @@ def addColorsToAvailableColors():
         print(f"{newColor} has been added to the available colors.")
     else:
         print(f"{newColor} is already in the available colors.")
+
 
 main()
