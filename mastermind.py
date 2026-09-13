@@ -3,7 +3,8 @@ import random
 colors = ['red', 'green', 'blue', 'yellow', 'purple', "white"]
 
 def menu():
-    print("Welcome to Mastermind!")
+    name = input("Please enter your name: ")
+    print(f"Hello {name}, Welcome to Mastermind!")
     print("1. Start a new game")
     print("2. View scores")
     print("3. Settings")
@@ -67,19 +68,24 @@ def startGame():
         userGuess = guess()
         print(f"You have {nbAttempts} attempts left.")
         codeWithFoundLetters = createCodeWithFoundLetters(userGuess, code)
+        lettersInsideCode = checkIfLetterisInsideCode(userGuess, code)
+        print(f"Letters partially correct: {lettersInsideCode} ")
         print(f"Code with found letters: {codeWithFoundLetters}")
         print(f"Code: {code}, codeWithFoundLetters: {codeWithFoundLetters}")
         nbAttempts -= 1
         
-
     replay()
 
 def replay():
+    gameSessions = 1
     replay = input("Do you want to play again? (y/n): ")
     if replay.lower() == "y":
+        gameSessions += 1
         startGame()
+        return gameSessions
     else:
         exit() 
+        return gameSessions
 
 def createCodeWithFoundLetters(userGuess, code):
     codeWithFoundLetters = ""
@@ -92,6 +98,14 @@ def createCodeWithFoundLetters(userGuess, code):
             codeWithFoundLetters += "*"
     return codeWithFoundLetters
 
+def checkIfLetterisInsideCode(userGuess, code):
+    letters = ""
+    for i in range(len(userGuess)):
+        for j in range(len(code)):
+            if userGuess[i] == code[j]:
+                if i != j :
+                    letters += userGuess[i]
+    return letters
 
 def viewScores():
     pass
