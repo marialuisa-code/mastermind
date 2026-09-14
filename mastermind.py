@@ -11,6 +11,7 @@ codeLength = DEFAULT_CODE_LENGTH
 # je dois remplacer ces valeurs pour lire depuis le fichier !!!
 
 
+
 def askName():
     name = input("Please enter your name: ")
     print(f"Hello {name}, Welcome to Mastermind!")
@@ -153,9 +154,14 @@ def savePreferences(name, color, attempts = 12, lengthOfCode = 4):
         "colors": color,
     }
 
-    json_str = json.dumps(settingsPreferences, indent=4)
+    preferences = json.dumps(settingsPreferences, indent=4)
     with open("settings.json", "w") as file:
-        file.write(json_str)
+        file.write(preferences)
+
+def readFromPreferences():
+    with open("settings.json", "r") as file:
+        preferences = json.load(file)
+        return preferences
 
 def pickNumberOfAttempts():
     attempts = int(input("Enter the number of attempts you want (default is 12): "))
@@ -174,4 +180,5 @@ def addColorsToAvailableColors():
         print(f"{newColor} is already in the available colors.")
 
 
-main()
+#main()
+print(readFromPreferences())
