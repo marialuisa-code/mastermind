@@ -3,13 +3,6 @@ import json
 
 
 colors = ['red', 'green', 'blue', 'yellow', 'purple', "white"]
-DEFAULT_ATTEMPTS = 12
-DEFAULT_CODE_LENGTH = 4
-attempts = DEFAULT_ATTEMPTS
-codeLength = DEFAULT_CODE_LENGTH
-
-# je dois remplacer ces valeurs pour lire depuis le fichier !!!
-
 
 
 def askName():
@@ -31,9 +24,9 @@ def printAvailableColors():
     for color in colors:
         print(color)
 
-def createCode():
+def createCode(lengthPreferences):
     code = ""
-    for i in range (codeLength):
+    for i in range (lengthPreferences):
         color = random.choice(colors)
         code += color[0]
     return code
@@ -45,7 +38,6 @@ def hideCode(code):
     return hiddenCode
 
 def compareLetters(guessedLetter, codeLetter):
-    print(f"Guessed letter: {guessedLetter}, Code letter: {codeLetter}")
     if guessedLetter.lower() == codeLetter:
         return True
     return False
@@ -72,8 +64,13 @@ def main():
 
 def startGame():
 
-    nbAttempts = attempts
-    code = createCode()
+    preferences = readFromPreferences()
+    nbAttempts = preferences["numberOfAttempts"]
+    lengthCode = preferences["lengthOfCode"]
+    #colorsTab = colors.append(preferences["colors"])
+
+
+    code = createCode(lengthCode)
     codeWithFoundLetters = []
     printAvailableColors()
     print(hideCode(code))
@@ -103,13 +100,22 @@ def replay():
 
 def createCodeWithFoundLetters(userGuess, code):
     codeWithFoundLetters = ""
-    for i in range(len(userGuess)):
-        if compareLetters(userGuess[i].lower(), code[i]):
-            print("Correct guess!")
-            codeWithFoundLetters += userGuess[i]
-        else:
-            print("Incorrect guess.")
+    if (len(userGuess) < len(code)):
+        print(f"Your guessed code is TOO SHORT, it should be {len(code)} characters long !")
+        for i in range(len(userGuess)):
+            if compareLetters(userGuess[i].lower(), code[i]):
+                codeWithFoundLetters += userGuess[i]
+            else:
+                codeWithFoundLetters += "*"
+        differenceBetweenlength = len(code) - len(userGuess)
+        for i in range(differenceBetweenlength):
             codeWithFoundLetters += "*"
+    else:
+        for i in range(len(code)):
+            if compareLetters(userGuess[i].lower(), code[i]):
+                codeWithFoundLetters += userGuess[i]
+            else:
+                codeWithFoundLetters += "*"
     return codeWithFoundLetters
 
 def checkIfLetterisInsideCode(userGuess, code):
@@ -139,19 +145,20 @@ def settings(user):
         case "2":
             lengthOfCode = pickLengthOfCode()
         case "3":
-            color= addColorsToAvailableColors()
+            preferencesColors= addColorsToAvailableColors()
+            print(preferencesColors)
         case _:
             print("Invalid choice. Please try again.")
-    savePreferences(user, color, attempts, lengthOfCode)
+    savePreferences(user, preferencesColors, attempts, lengthOfCode)
     main()
 
-def savePreferences(name, color, attempts = 12, lengthOfCode = 4):
+def savePreferences(name, addedColors, attempts = 12, lengthOfCode = 4):
    
     settingsPreferences = {
         "name": name,
         "numberOfAttempts": attempts,
         "lengthOfCode": lengthOfCode,
-        "colors": color,
+        "colors": addedColors,
     }
 
     preferences = json.dumps(settingsPreferences, indent=4)
@@ -172,13 +179,20 @@ def pickLengthOfCode():
     return codeLength
 
 def addColorsToAvailableColors():
-    newColor = input("Enter a new color to add: ")
-    if newColor not in colors:
-        colors.append(newColor)
-        print(f"{newColor} has been added to the available colors.")
-    else:
-        print(f"{newColor} is already in the available colors.")
+    continueAddingColors = True
+    preferencesColors= []
+    while continueAddingColors:
+        addNew = input("Do you want to add another color? (y/n): ")
+        if (addNew.lower() == "y"):
+            newColor = input("Enter a new color to add: ")
+            if (newColor not in colors) and (newColor not in colors):
+                preferencesColors.append(newColor)
+                print(f"{newColor} has been added to the available colors.")
+            else:
+                print(f"{newColor} is already in the available colors.")
+        else:
+            continueAddingColors = False
+    print(preferencesColors)
+    return preferencesColors
 
-
-#main()
-print(readFromPreferences())
+main()

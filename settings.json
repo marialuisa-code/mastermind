@@ -1,6 +1,9 @@
 {
     "name": "lu",
-    "numberOfAttempts": 15,
+    "numberOfAttempts": 12,
     "lengthOfCode": 4,
-    "colors": ""
+    "colors": [
+        "Pink",
+        "Black"
+    ]
 }
