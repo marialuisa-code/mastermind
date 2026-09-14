@@ -1,15 +1,14 @@
 import random
 import json
 
-
 colors = ['red', 'green', 'blue', 'yellow', 'purple', "white"]
+gameSessions = 1
 
 
 def askName():
     name = input("Please enter your name: ")
     print(f"Hello {name}, Welcome to Mastermind!")
     return name
-
 
 def menu():
     print("1. Start a new game")
@@ -67,32 +66,45 @@ def startGame():
     preferences = readFromPreferences()
     nbAttempts = preferences["numberOfAttempts"]
     lengthCode = preferences["lengthOfCode"]
-    #colorsTab = colors.append(preferences["colors"])
-
-
+    playAgain = True
+    gameSessions = 1
+   
     code = createCode(lengthCode)
     codeWithFoundLetters = []
     printAvailableColors()
     print(hideCode(code))
 
-    while code != codeWithFoundLetters and nbAttempts > 0:
+    while code != codeWithFoundLetters and nbAttempts > 0 and playAgain == True:
         userGuess = guess()
-        print(f"You have {nbAttempts} attempts left.")
         codeWithFoundLetters = createCodeWithFoundLetters(userGuess, code)
         lettersInsideCode = checkIfLetterisInsideCode(userGuess, code)
         print(f"Letters partially correct: {lettersInsideCode} ")
         print(f"Code with found letters: {codeWithFoundLetters}")
         print(f"Code: {code}, codeWithFoundLetters: {codeWithFoundLetters}")
         nbAttempts -= 1
-        
-    replay()
+        print(f"You have {nbAttempts} attempts left.")
+
+    gameSessions += 1
+    createHiddenStatisticsFile(gameSessions, nbAttempts)
+    
+    if ((nbAttempts == 0 ) or (code == codeWithFoundLetters)):
+        replay = input("Do you want to play again? (y/n): ")
+        if replay.lower() == "y":
+            playAgain = True
+            
+            print(f"GAME sessions{gameSessions}")
+            startGame()
+        else:
+            playAgain = False
+            exit()         
 
 def replay():
-    gameSessions = 1
     replay = input("Do you want to play again? (y/n): ")
     if replay.lower() == "y":
         gameSessions += 1
+        print(f"gamesessions nb {gameSessions}")
         startGame()
+        
         return gameSessions
     else:
         exit() 
@@ -138,7 +150,7 @@ def settings(user):
     choice = input("Please enter your choice (1-3): ")
     attempts = 12
     lengthOfCode = 4
-    color = ""
+    preferencesColors = []
     match choice:
         case "1":
             attempts = pickNumberOfAttempts()
@@ -194,5 +206,15 @@ def addColorsToAvailableColors():
             continueAddingColors = False
     print(preferencesColors)
     return preferencesColors
+
+def createHiddenStatisticsFile(gameSession, totalScore ):
+    statistics = {
+        "gameSession": gameSession,
+        "totalScore": totalScore,
+    }
+
+    stats = json.dumps(statistics, indent=4)
+    with open(".hiddenStatistics.json", "w") as file:
+        file.write(stats)
 
 main()
